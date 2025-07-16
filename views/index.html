@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rastaURL</title>
+    <style>
+      :root {
+        --rasta-yellow: #fdd835;
+        --rasta-green: #43a047;
+        --rasta-black: #212121;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--rasta-black);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--rasta-yellow);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      h1 {
+        color: var(--rasta-green);
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 300px;
+      }
+
+      input[type="url"] {
+        padding: 10px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 4px;
+        outline: none;
+      }
+
+      button {
+        background-color: var(--rasta-green);
+        color: white;
+        border: none;
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #388e3c;
+      }
+
+      #shortenedUrl {
+        margin-top: 20px;
+        color: var(--rasta-yellow);
+        font-size: 1rem;
+        word-break: break-all;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>rastaURL</h1>
+
+    <form id="shortenForm">
+      <input
+        type="url"
+        id="urlInput"
+        placeholder="Enter URL to shorten"
+        required
+      />
+      <button type="submit">Shorten</button>
+    </form>
+
+    <div id="shortenedUrl"></div>
+
+    <script>
+      const form = document.getElementById("shortenForm");
+      const urlInput = document.getElementById("urlInput");
+      const shortenedUrlDiv = document.getElementById("shortenedUrl");
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const url = urlInput.value;
+        try {
+          const response = await fetch(
+            `/shorten?url=${encodeURIComponent(url)}`
+          );
+          const data = await response.json();
+
+          if (data.shortened) {
+            shortenedUrlDiv.innerHTML = `Shortened URL: <a href="${data.shortened}" target="_blank" style="color: var(--rasta-green);">${data.shortened}</a>`;
+          } else {
+            shortenedUrlDiv.textContent =
+              data.error || "Failed to shorten URL.";
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          shortenedUrlDiv.textContent = "Something went wrong.";
+        }
+      });
+    </script>
+  </body>
+</html>
